@@ -1,0 +1,25 @@
+name: GeneralControls
+version: '1.0-SNAPSHOT'
+main: hs.generalControls.GeneralControls
+api-version: '1.21'
+load: STARTUP
+authors: [ ___Pumpkinn ]
+commands:
+  spawn:
+    description: Teleport to the server spawn
+    usage: /spawn
+  seteconspawn:
+    description: Set the server spawn location
+    usage: /seteconspawn
+    permission: generalcontrols.seteconspawn
+    permission-message: "§cYou don't have permission to use this command!"
+
+permissions:
+  generalcontrols.*:
+    description: Gives access to all GeneralControls commands
+    default: op
+    children:
+      generalcontrols.seteconspawn: true
+  generalcontrols.seteconspawn:
+    description: Allows setting the spawn location
+    default: op
