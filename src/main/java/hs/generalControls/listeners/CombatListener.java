@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +27,24 @@ public class CombatListener implements Listener {
 
     public CombatListener(CombatManager combatManager) {
         this.combatManager = combatManager;
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player victim = event.getEntity();
+        Player killer = victim.getKiller();
+
+        // Remove combat tag from the victim (who died)
+        if (combatManager.isInCombat(victim)) {
+            combatManager.removeCombatTag(victim);
+            victim.sendMessage("§a§l[COMBAT] §aCombat ended due to death.");
+        }
+
+        // Remove combat tag from the killer (who killed the victim)
+        if (killer != null && combatManager.isInCombat(killer)) {
+            combatManager.removeCombatTag(killer);
+            killer.sendMessage("§a§l[COMBAT] §aCombat ended - opponent eliminated.");
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

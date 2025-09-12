@@ -19,7 +19,7 @@ public class DiscordPromotion {
     private final Random random;
 
     // Discord server invite link - change this to your actual invite
-    private static final String DISCORD_INVITE = "https://discord.gg/S83934SWaA";
+    private static final String DISCORD_INVITE = "https://discord.gg/yourserver";
 
     // List of promotional messages
     private final List<String> promotionMessages = Arrays.asList(
@@ -83,6 +83,9 @@ public class DiscordPromotion {
             player.sendMessage(ChatColor.STRIKETHROUGH + "                                                    ");
             player.sendMessage("");
         }
+
+        // Log to console
+        plugin.getLogger().info("Discord promotion message sent to " + Bukkit.getOnlinePlayers().size() + " players.");
     }
 
     /**
