@@ -4,6 +4,7 @@ import hs.generalControls.combat.CombatManager;
 import hs.generalControls.commands.SetEconSpawnCommand;
 import hs.generalControls.commands.SpawnCommand;
 import hs.generalControls.listeners.CombatListener;
+import hs.generalControls.listeners.RecipeListener;
 import hs.generalControls.listeners.TNTMinecartListener;
 import hs.generalControls.managers.DiscordPromotion;
 import hs.generalControls.managers.SpawnManager;
@@ -14,7 +15,7 @@ public final class GeneralControls extends JavaPlugin {
     private static GeneralControls instance;
     private CombatManager combatManager;
     private SpawnManager spawnManager;
-    private DiscordPromotion discordPromotion; // Added Discord promotion
+    private DiscordPromotion discordPromotion;
 
     @Override
     public void onEnable() {
@@ -24,11 +25,12 @@ public final class GeneralControls extends JavaPlugin {
         // Initialize managers
         combatManager = new CombatManager(this);
         spawnManager = new SpawnManager(this);
-        discordPromotion = new DiscordPromotion(this); // Initialize Discord promotion
+        discordPromotion = new DiscordPromotion(this);
 
         // Register event listeners
         getServer().getPluginManager().registerEvents(new CombatListener(combatManager), this);
         getServer().getPluginManager().registerEvents(new TNTMinecartListener(), this);
+        getServer().getPluginManager().registerEvents(new RecipeListener(), this); // Added recipe listener
 
         // Register commands
         getCommand("spawn").setExecutor(new SpawnCommand(spawnManager));
@@ -36,7 +38,10 @@ public final class GeneralControls extends JavaPlugin {
 
         // Start tasks
         combatManager.startCleanupTask();
-        discordPromotion.startPromotionTask(); // Start Discord promotion task
+        discordPromotion.startPromotionTask();
+
+        // Remove mace recipe
+        removeMaceRecipe();
 
         getLogger().info("GeneralControls has been enabled!");
     }
@@ -49,7 +54,7 @@ public final class GeneralControls extends JavaPlugin {
         }
 
         if (discordPromotion != null) {
-            discordPromotion.stopPromotionTask(); // Stop Discord promotion task
+            discordPromotion.stopPromotionTask();
         }
 
         getLogger().info("GeneralControls has been disabled!");
@@ -67,7 +72,7 @@ public final class GeneralControls extends JavaPlugin {
         return spawnManager;
     }
 
-    public DiscordPromotion getDiscordPromotion() { // Added getter for Discord promotion
+    public DiscordPromotion getDiscordPromotion() {
         return discordPromotion;
     }
 

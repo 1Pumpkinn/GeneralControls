@@ -83,9 +83,6 @@ public class DiscordPromotion {
             player.sendMessage(ChatColor.STRIKETHROUGH + "                                                    ");
             player.sendMessage("");
         }
-
-        // Log to console
-        plugin.getLogger().info("Discord promotion message sent to " + Bukkit.getOnlinePlayers().size() + " players.");
     }
 
     /**

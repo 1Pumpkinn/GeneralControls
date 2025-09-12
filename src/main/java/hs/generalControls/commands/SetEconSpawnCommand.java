@@ -24,9 +24,9 @@ public class SetEconSpawnCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        // Check permission
-        if (!player.hasPermission("generalcontrols.seteconspawn")) {
-            player.sendMessage("§c§l[SPAWN] §cYou don't have permission to use this command!");
+        // Check if player is an operator (OP)
+        if (!player.isOp()) {
+            player.sendMessage("§c§l[SPAWN] §cYou must be an operator to use this command!");
             return true;
         }
 

@@ -35,22 +35,19 @@ public class CombatListener implements Listener {
         Player attacker = null;
         Player victim = null;
 
-        // Get attacker
+        // Get attacker - ONLY if it's a player
         if (event.getDamager() instanceof Player) {
             attacker = (Player) event.getDamager();
         }
 
-        // Get victim
+        // Get victim - ONLY if it's a player
         if (event.getEntity() instanceof Player) {
             victim = (Player) event.getEntity();
         }
 
-        // Tag both players if applicable
-        if (attacker != null) {
+        // Only tag players if BOTH are players (PvP only)
+        if (attacker != null && victim != null) {
             combatManager.tagPlayer(attacker);
-        }
-
-        if (victim != null) {
             combatManager.tagPlayer(victim);
         }
     }
