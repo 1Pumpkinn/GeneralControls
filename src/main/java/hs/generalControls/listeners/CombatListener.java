@@ -43,7 +43,7 @@ public class CombatListener implements Listener {
         // Remove combat tag from the killer (who killed the victim)
         if (killer != null && combatManager.isInCombat(killer)) {
             combatManager.removeCombatTag(killer);
-            killer.sendMessage("§a§l[COMBAT] §aCombat ended - opponent eliminated.");
+            killer.sendMessage("§a§l[COMBAT] §aCombat ended");
         }
     }
 

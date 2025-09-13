@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class SpawnManager {
 
@@ -14,6 +15,9 @@ public class SpawnManager {
     public SpawnManager(GeneralControls plugin) {
         this.plugin = plugin;
         loadSpawnLocation();
+
+        // Auto-save spawn location every 5 minutes
+        startAutoSaveTask();
     }
 
     public void setSpawnLocation(Location location) {
@@ -62,26 +66,48 @@ public class SpawnManager {
                 float pitch = (float) config.getDouble("spawn.pitch", 0.0);
 
                 spawnLocation = new Location(world, x, y, z, yaw, pitch);
+                plugin.getLogger().info("Spawn location loaded: " + worldName + " at " + x + ", " + y + ", " + z);
             } else {
                 plugin.getLogger().warning("Spawn world '" + worldName + "' not found!");
             }
+        } else {
+            plugin.getLogger().info("No spawn location set yet.");
         }
     }
 
     public void saveSpawnLocation() {
-        FileConfiguration config = plugin.getConfig();
+        try {
+            FileConfiguration config = plugin.getConfig();
 
-        if (spawnLocation != null) {
-            config.set("spawn.world", spawnLocation.getWorld().getName());
-            config.set("spawn.x", spawnLocation.getX());
-            config.set("spawn.y", spawnLocation.getY());
-            config.set("spawn.z", spawnLocation.getZ());
-            config.set("spawn.yaw", spawnLocation.getYaw());
-            config.set("spawn.pitch", spawnLocation.getPitch());
-        } else {
-            config.set("spawn", null);
+            if (spawnLocation != null) {
+                config.set("spawn.world", spawnLocation.getWorld().getName());
+                config.set("spawn.x", spawnLocation.getX());
+                config.set("spawn.y", spawnLocation.getY());
+                config.set("spawn.z", spawnLocation.getZ());
+                config.set("spawn.yaw", spawnLocation.getYaw());
+                config.set("spawn.pitch", spawnLocation.getPitch());
+
+                plugin.saveConfig();
+                plugin.getLogger().info("Spawn location saved successfully.");
+            } else {
+                config.set("spawn", null);
+                plugin.saveConfig();
+            }
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to save spawn location: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
 
-        plugin.saveConfig();
+    private void startAutoSaveTask() {
+        // Auto-save every 5 minutes (6000 ticks)
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (spawnLocation != null) {
+                    saveSpawnLocation();
+                }
+            }
+        }.runTaskTimer(plugin, 6000L, 6000L);
     }
 }

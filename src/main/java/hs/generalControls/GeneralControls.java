@@ -3,7 +3,6 @@ package hs.generalControls;
 import hs.generalControls.combat.CombatManager;
 import hs.generalControls.commands.SetEconSpawnCommand;
 import hs.generalControls.commands.SpawnCommand;
-import hs.generalControls.config.GeneralConfig;
 import hs.generalControls.listeners.CombatListener;
 import hs.generalControls.listeners.RecipeListener;
 import hs.generalControls.listeners.TNTMinecartListener;
@@ -11,10 +10,11 @@ import hs.generalControls.managers.DiscordPromotion;
 import hs.generalControls.managers.SpawnManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
+
 public final class GeneralControls extends JavaPlugin {
 
     private static GeneralControls instance;
-    private GeneralConfig generalConfig;
     private CombatManager combatManager;
     private SpawnManager spawnManager;
     private DiscordPromotion discordPromotion;
@@ -23,9 +23,6 @@ public final class GeneralControls extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
-
-        // Initialize config first
-        generalConfig = new GeneralConfig(this);
 
         // Initialize managers with config
         combatManager = new CombatManager(this);
@@ -44,39 +41,32 @@ public final class GeneralControls extends JavaPlugin {
         // Start tasks
         combatManager.startCleanupTask();
 
-        // Only start Discord promotion if enabled in config
-        if (generalConfig.isDiscordPromotionEnabled()) {
-            discordPromotion.startPromotionTask();
-        }
 
-        // Remove mace recipe if disabled in config
-        if (generalConfig.isMaceRecipeDisabled()) {
-            removeMaceRecipe();
-        }
+
 
         getLogger().info("GeneralControls has been enabled!");
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        // Plugin shutdown logic - save everything before shutdown
+        getLogger().info("Shutting down GeneralControls...");
+
         if (spawnManager != null) {
             spawnManager.saveSpawnLocation();
+            getLogger().info("Spawn location saved.");
         }
 
         if (discordPromotion != null) {
             discordPromotion.stopPromotionTask();
         }
 
+
         getLogger().info("GeneralControls has been disabled!");
     }
 
     public static GeneralControls getInstance() {
         return instance;
-    }
-
-    public GeneralConfig getGeneralConfig() {
-        return generalConfig;
     }
 
     public CombatManager getCombatManager() {
